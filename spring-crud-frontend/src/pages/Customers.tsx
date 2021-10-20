@@ -15,16 +15,17 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import CustomerModal from "../components/CustomerModal";
 import CustomerToolbar from "../components/CustomerToolbar";
-import { Customer } from "../types/types";
+import { Customer, CustomerAccount } from "../types/types";
 
-const createData = (
+export const createData = (
   id: number,
   firstName: string,
   lastName: string,
   dob: Date,
   nic: string,
   phoneNumber: string,
-  address: string
+  address: string,
+  accounts: CustomerAccount[]
 ) => {
   return {
     id,
@@ -34,18 +35,7 @@ const createData = (
     nic,
     phoneNumber,
     address,
-    history: [
-      {
-        date: "2020-01-05",
-        customerId: "11091700",
-        amount: 3,
-      },
-      {
-        date: "2020-01-02",
-        customerId: "Anonymous",
-        amount: 1,
-      },
-    ],
+    accounts,
   };
 };
 
@@ -86,18 +76,16 @@ function Row(props: { row: ReturnType<typeof createData> }) {
                 <TableHead>
                   <TableRow>
                     <TableCell>Account Number</TableCell>
-                    <TableCell>Account Type</TableCell>
                     <TableCell align="right">Balance</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {row.history.map((historyRow) => (
-                    <TableRow key={historyRow.date}>
+                  {row.accounts.map((accountRow) => (
+                    <TableRow key={accountRow.accountNumber}>
                       <TableCell component="th" scope="row">
-                        {historyRow.date}
+                        {accountRow.accountNumber}
                       </TableCell>
-                      <TableCell>{historyRow.customerId}</TableCell>
-                      <TableCell align="right">{historyRow.amount}</TableCell>
+                      <TableCell align="right">{accountRow.balance}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -112,17 +100,26 @@ function Row(props: { row: ReturnType<typeof createData> }) {
 
 const Customers = () => {
   const [open, setOpen] = useState(false);
-  const [update, setUpdate] = useState(false);
-  const [selected, setSelected] = useState(0);
 
   const [rows, setRows] = useState([
-    createData(0, "", "", new Date(), "", "", ""),
+    createData(0, "", "", new Date(), "", "", "", [
+      { accountId: 0, balance: 0, customerId: 0, accountNumber: 0 },
+    ]),
   ]);
 
   useEffect(() => {
-    axios.get<Customer[]>("/customer/all").then((response) =>
+    (async () => {
+      const response = await axios.get<Customer[]>("/customer/all");
+
+      const responses = await Promise.all(
+        response.data.map((customer) =>
+          axios.get<CustomerAccount[]>(
+            "/customeraccount/customerid/" + customer.id
+          )
+        )
+      );
       setRows(
-        response.data.map((customer) => {
+        response.data.map((customer, index) => {
           const { id, firstName, lastName, dob, nic, phoneNumber, address } =
             customer;
           return createData(
@@ -132,12 +129,13 @@ const Customers = () => {
             new Date(dob),
             nic,
             phoneNumber,
-            address
+            address,
+            responses[index].data
           );
         })
-      )
-    );
-  });
+      );
+    })();
+  }, []);
 
   return (
     <Box sx={{ width: "100%" }}>
@@ -145,14 +143,10 @@ const Customers = () => {
         open={open}
         setOpen={setOpen}
         rows={rows}
-        // setRows={setRows}
+        setRows={setRows}
       />
       <Paper sx={{ width: "100%", mb: 2 }}>
-        <CustomerToolbar
-          setShow={setOpen}
-          setUpdate={setUpdate}
-          setSelected={setSelected}
-        />
+        <CustomerToolbar setShow={setOpen} />
         <TableContainer component={Paper}>
           <Table aria-label="collapsible table">
             <TableHead>

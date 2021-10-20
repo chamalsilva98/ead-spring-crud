@@ -28,6 +28,7 @@ const AccountModal = (props: AccountModalProps) => {
   };
 
   const handleSave = async () => {
+    if (isNaN(+interestRate)) return;
     const values: Account = {
       accountName,
       interestRate: +interestRate,
@@ -44,6 +45,7 @@ const AccountModal = (props: AccountModalProps) => {
   };
 
   const handleUpdate = async () => {
+    if (isNaN(+interestRate)) return;
     const values: Account = {
       id: props.selected,
       accountName,

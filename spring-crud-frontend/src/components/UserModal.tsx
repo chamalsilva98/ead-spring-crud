@@ -87,6 +87,7 @@ const UserModal = (props: UserModalProps) => {
     setUsername("");
     setPassword("");
     setPrivilege("normal");
+    setStatus("active");
   };
 
   useEffect(() => {
@@ -163,24 +164,26 @@ const UserModal = (props: UserModalProps) => {
           </RadioGroup>
         </FormControl>
         <br />
-        <FormControl component="fieldset" sx={{ marginTop: "8px" }}>
-          <FormLabel component="legend">Deactivate</FormLabel>
-          <RadioGroup
-            row
-            aria-label="status"
-            defaultValue="active"
-            name="radio-buttons-group"
-            value={status}
-            onChange={(e) => setStatus(e.target.value)}
-          >
-            <FormControlLabel value="active" control={<Radio />} label="No" />
-            <FormControlLabel
-              value="inactive"
-              control={<Radio />}
-              label="Yes"
-            />
-          </RadioGroup>
-        </FormControl>
+        {props.update && (
+          <FormControl component="fieldset" sx={{ marginTop: "8px" }}>
+            <FormLabel component="legend">Deactivate</FormLabel>
+            <RadioGroup
+              row
+              aria-label="status"
+              defaultValue="active"
+              name="radio-buttons-group"
+              value={status}
+              onChange={(e) => setStatus(e.target.value)}
+            >
+              <FormControlLabel value="active" control={<Radio />} label="No" />
+              <FormControlLabel
+                value="inactive"
+                control={<Radio />}
+                label="Yes"
+              />
+            </RadioGroup>
+          </FormControl>
+        )}
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose}>Cancel</Button>

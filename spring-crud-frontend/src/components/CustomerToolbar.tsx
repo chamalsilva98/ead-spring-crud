@@ -7,8 +7,6 @@ import React, { Dispatch, SetStateAction } from "react";
 
 interface CustomerToolbarProps {
   setShow: Dispatch<SetStateAction<boolean>>;
-  setUpdate: Dispatch<SetStateAction<boolean>>;
-  setSelected: Dispatch<SetStateAction<number>>;
 }
 
 const CustomerToolbar = (props: CustomerToolbarProps) => {
@@ -31,8 +29,6 @@ const CustomerToolbar = (props: CustomerToolbarProps) => {
         <IconButton
           onClick={() => {
             props.setShow(true);
-            props.setUpdate(false);
-            props.setSelected(0);
           }}
         >
           <AddCircleIcon />

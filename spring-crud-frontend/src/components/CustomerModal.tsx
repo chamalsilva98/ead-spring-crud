@@ -9,13 +9,14 @@ import TextField from "@mui/material/TextField";
 import Box from "@mui/system/Box";
 import axios from "axios";
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { createData } from "../pages/Customers";
 import { Account, Customer, CustomerAccount } from "../types/types";
 
 interface CustomerModalProps {
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
-  rows: Customer[];
-  // setRows: Dispatch<SetStateAction<Customer[]>>;
+  rows: ReturnType<typeof createData>[];
+  setRows: Dispatch<SetStateAction<ReturnType<typeof createData>[]>>;
 }
 
 const CustomerModal = (props: CustomerModalProps) => {
@@ -63,7 +64,8 @@ const CustomerModal = (props: CustomerModalProps) => {
       address &&
       dob &&
       account &&
-      amount
+      amount &&
+      !isNaN(+amount)
     ) {
       const values: Customer = {
         firstName,
@@ -85,10 +87,16 @@ const CustomerModal = (props: CustomerModalProps) => {
           "/customeraccount/add",
           accountValues
         );
-        // props.setRows((rows) => [
-        //   ...rows,
-        //   { ...values, id: response.data as number },
-        // ]);
+        props.setRows((rows) => [
+          ...rows,
+          {
+            ...values,
+            id: accountValues.customerId,
+            accounts: [
+              { ...accountValues, accountNumber: response.data as number },
+            ],
+          },
+        ]);
         reset();
         handleClose();
       } catch (error) {}

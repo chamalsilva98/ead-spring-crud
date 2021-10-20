@@ -1,19 +1,17 @@
 package com.ead.springcrud.models;
 
 import java.util.Date;
-import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 
 @Entity
 public class Customer {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String firstName;
     private String lastName;
@@ -21,9 +19,6 @@ public class Customer {
     private String nic;
     private String phoneNumber;
     private String address;
-
-    // @OneToMany(mappedBy = "employee")
-    // private List<CustomerAccount> accounts;
 
     public Integer getId() {
         return id;
@@ -80,14 +75,6 @@ public class Customer {
     public void setAddress(String address) {
         this.address = address;
     }
-
-    // public List<CustomerAccount> getAccounts() {
-    // return accounts;
-    // }
-
-    // public void setAccounts(List<CustomerAccount> accounts) {
-    // this.accounts = accounts;
-    // }
 
     @Override
     public String toString() {

@@ -24,7 +24,7 @@ public class CustomerAccountController {
 
     @PostMapping(path = "/add")
     public Integer addCustomerAccount(@RequestBody CustomerAccount customerAccount) {
-        return customerAccountRepository.save(customerAccount).getAccountId();
+        return customerAccountRepository.save(customerAccount).getAccountNumber();
     }
 
     @GetMapping(path = "/all")
